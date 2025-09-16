@@ -167,11 +167,9 @@ export default function App() {
         </div>
 
         {/* Card Preview */}
-        {/* Card Preview */}
         <div className="bg-[#065f46] flex items-center justify-center p-8">
           <motion.div
-            ref={frontRef}
-            className="relative shadow-lg text-white"
+            className="relative rounded-xl shadow-lg text-white"
             style={{
               width: "400px",
               height: "250px",
@@ -185,8 +183,8 @@ export default function App() {
           >
             {/* Front */}
             <div
-              className="absolute inset-0 bg-[#22c55e] p-6 flex flex-col justify-between backface-hidden"
-              style={{ borderRadius: "1.5rem" }}
+              ref={frontRef} // ✅ ref hanya di front card
+              className="absolute inset-0 bg-[#22c55e] rounded-xl p-6 flex flex-col justify-between backface-hidden"
             >
               <div className="flex justify-between">
                 <h3 className="text-lg font-bold">Kartu Pasien</h3>
@@ -205,10 +203,7 @@ export default function App() {
             </div>
 
             {/* Back */}
-            <div
-              className="absolute inset-0 bg-[#1f2937] p-6 flex flex-col justify-center rotate-y-180 backface-hidden"
-              style={{ borderRadius: "1.5rem" }}
-            >
+            <div className="absolute inset-0 bg-[#1f2937] rounded-xl p-6 flex flex-col justify-center rotate-y-180 backface-hidden">
               <div className="w-full h-10 bg-black mb-4"></div>
               <div className="text-center">
                 <p className="bg-white px-3 py-1 rounded text-black font-bold inline-block">
