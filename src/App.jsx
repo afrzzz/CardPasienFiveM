@@ -147,8 +147,11 @@ export default function App() {
             {/* Front Kartu */}
             <div
               ref={frontRef}
-              className="absolute inset-0 rounded-xl p-6 flex flex-col justify-between bg-gradient-to-br from-blue-500 to-blue-700"
-              style={{ backfaceVisibility: "hidden" }}
+              className="absolute inset-0 rounded-xl p-6 flex flex-col justify-between"
+              style={{
+                backfaceVisibility: "hidden",
+                background: "linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)", // hex-safe
+              }}
             >
               {/* Header */}
               <div className="flex justify-between items-center">
@@ -162,7 +165,6 @@ export default function App() {
 
               {/* Info + Foto */}
               <div className="flex justify-between mt-4">
-                {/* Kolom kiri */}
                 <div
                   className="flex flex-col gap-1"
                   style={{ maxWidth: "calc(100% - 7rem)" }}
@@ -170,7 +172,7 @@ export default function App() {
                   <p className="tracking-wide text-sm truncate">
                     Jabatan: {jabatan || "Jabatan"}
                   </p>
-                  <p className="font-semibold text-lg break-words">
+                  <p className="font-semibold text-lg truncate" title={nama}>
                     {nama || "Nama Anggota"}
                   </p>
 
@@ -182,7 +184,7 @@ export default function App() {
                   )}
                 </div>
 
-                {/* Kolom kanan: foto + TTL */}
+                {/* Foto + TTL */}
                 {photo && (
                   <div className="flex flex-col items-center w-28 flex-shrink-0">
                     <div className="w-28 h-28 overflow-hidden border border-white/40 rounded">
@@ -192,7 +194,6 @@ export default function App() {
                         className="w-full h-full object-cover"
                       />
                     </div>
-                    {/* TTL di bawah foto */}
                     <p className="mt-2 text-sm opacity-80">{ttl || "TTL"}</p>
                   </div>
                 )}
@@ -201,27 +202,24 @@ export default function App() {
 
             {/* Back Kartu */}
             <div
-              className="absolute inset-0 bg-gradient-to-br from-blue-700 to-blue-900 rounded-xl p-6 flex flex-col justify-center"
+              className="absolute inset-0 rounded-xl p-6 flex flex-col justify-center"
               style={{
                 backfaceVisibility: "hidden",
                 transform: "rotateY(180deg)",
+                background: "linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%)", // hex-safe
               }}
             >
               <h3 className="text-white text-lg font-bold text-center mb-4">
                 Detail Anggota
               </h3>
 
-              {/* Nama & Jabatan */}
               <div className="bg-white/20 p-3 rounded mb-2 text-center overflow-hidden">
-                <p className="text-sm font-semibold truncate break-words">
+                <p className="text-sm font-semibold truncate" title={nama}>
                   {(nama || "Nama Anggota").split(" ").slice(0, 10).join(" ")}
                 </p>
-                <p className="text-xs truncate break-words">
-                  {jabatan || "Jabatan"}
-                </p>
+                <p className="text-xs truncate">{jabatan || "Jabatan"}</p>
               </div>
 
-              {/* TTL & Status */}
               <div className="bg-white/20 p-3 rounded text-center overflow-hidden">
                 <p className="text-sm font-semibold truncate">
                   {ttl || "Tanggal Lahir"}
