@@ -167,14 +167,14 @@ export default function App() {
         </div>
 
         {/* Card Preview */}
+        {/* Card Preview */}
         <div className="bg-[#065f46] flex items-center justify-center p-8">
           <motion.div
-            ref={frontRef} // bisa langsung pindahin ke sini
             className="relative rounded-xl shadow-lg text-white"
             style={{
-              width: "400px", // fix width
-              height: "250px", // fix height
-              fontFamily: "Arial, sans-serif", // biar font gak lari
+              width: "400px",
+              height: "250px",
+              fontFamily: "Arial, sans-serif",
               transformStyle: "preserve-3d",
             }}
             animate={{ rotateY: isBack ? 180 : 0 }}
@@ -182,7 +182,7 @@ export default function App() {
           >
             {/* Front */}
             <div
-              ref={frontRef} // ✅ hanya front yang diref
+              ref={frontRef} // ✅ ref hanya di front card
               className="absolute inset-0 bg-[#22c55e] rounded-xl p-6 flex flex-col justify-between backface-hidden"
             >
               <div className="flex justify-between">
