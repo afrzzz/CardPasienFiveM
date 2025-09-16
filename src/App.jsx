@@ -169,21 +169,20 @@ export default function App() {
         {/* Card Preview */}
         <div className="bg-[#065f46] flex items-center justify-center p-8">
           <motion.div
+            ref={frontRef} // bisa langsung pindahin ke sini
             className="relative rounded-xl shadow-lg text-white"
             style={{
-              width: "400px",
-              height: "250px",
-              fontFamily: "Arial, sans-serif",
+              width: "400px", // fix width
+              height: "250px", // fix height
+              fontFamily: "Arial, sans-serif", // biar font gak lari
               transformStyle: "preserve-3d",
-              borderRadius: "1.5rem", // ✅ lebih rounded (24px)
-              overflow: "hidden", // biar isi ikut terpotong sesuai rounded
             }}
             animate={{ rotateY: isBack ? 180 : 0 }}
             transition={{ duration: 0.6 }}
           >
             {/* Front */}
             <div
-              ref={frontRef} // ✅ ref hanya di front card
+              ref={frontRef} // ✅ hanya front yang diref
               className="absolute inset-0 bg-[#22c55e] rounded-xl p-6 flex flex-col justify-between backface-hidden"
             >
               <div className="flex justify-between">
