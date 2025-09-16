@@ -16,27 +16,28 @@ export default function App() {
   const handleGenerateLink = async () => {
     if (!frontRef.current) return;
 
-    const canvas = await html2canvas(frontRef.current, {
+    const cardCanvas = await html2canvas(frontRef.current, {
       scale: 2,
       useCORS: true,
       backgroundColor: null,
     });
 
-    const roundedCanvas = document.createElement("canvas");
-    const ctx = roundedCanvas.getContext("2d");
+    const padding = 60;
+    const finalCanvas = document.createElement("canvas");
+    finalCanvas.width = cardCanvas.width + padding * 2;
+    finalCanvas.height = cardCanvas.height + padding * 2;
 
-    roundedCanvas.width = canvas.width;
-    roundedCanvas.height = canvas.height;
+    const ctx = finalCanvas.getContext("2d");
+    ctx.clearRect(0, 0, finalCanvas.width, finalCanvas.height);
 
-    ctx.clearRect(0, 0, roundedCanvas.width, roundedCanvas.height);
-    ctx.save();
-    ctx.beginPath();
-    ctx.roundRect(0, 0, roundedCanvas.width, roundedCanvas.height, 40);
-    ctx.clip();
-    ctx.drawImage(canvas, 0, 0);
-    ctx.restore();
+    ctx.shadowColor = "rgba(0,0,0,0.25)";
+    ctx.shadowBlur = 40;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 20;
 
-    const dataUrl = roundedCanvas.toDataURL("image/png");
+    ctx.drawImage(cardCanvas, padding, padding);
+
+    const dataUrl = finalCanvas.toDataURL("image/png");
     const blob = await (await fetch(dataUrl)).blob();
 
     const webhookUrl =
@@ -52,7 +53,6 @@ export default function App() {
 
       if (!response.ok) throw new Error("Upload gagal");
       const result = await response.json();
-
       const fileUrl = result.attachments[0].url;
 
       await navigator.clipboard.writeText(fileUrl);
@@ -60,9 +60,9 @@ export default function App() {
       Swal.fire({
         title: "✅ Link berhasil dibuat!",
         html: `
-          <p>Link KTA sudah disalin ke clipboard.</p>
-          <p class="mt-2"><a href="${fileUrl}" target="_blank" class="text-blue-600 underline">🔗 Buka Link</a></p>
-        `,
+        <p>Link KTA sudah disalin ke clipboard.</p>
+        <p class="mt-2"><a href="${fileUrl}" target="_blank" class="text-blue-600 underline">🔗 Buka Link</a></p>
+      `,
         icon: "success",
         background: "#eff6ff",
         color: "#1e3a8a",
@@ -76,7 +76,12 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-400 to-blue-600 p-6">
+    <div
+      className="min-h-screen flex items-center justify-center p-6"
+      style={{
+        background: "linear-gradient(135deg, #60a5fa, #2563eb)", // from-blue-400 ke blue-600 (HEX)
+      }}
+    >
       <div className="bg-white rounded-2xl shadow-2xl grid md:grid-cols-2 w-full max-w-5xl overflow-hidden">
         {/* Form Section */}
         <div className="p-8 flex flex-col justify-center space-y-4">
@@ -89,7 +94,8 @@ export default function App() {
               value={jabatan}
               onChange={(e) => setJabatan(e.target.value)}
               placeholder="Jabatan"
-              className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 outline-none"
+              className="w-full border rounded-lg px-3 py-2 focus:ring-2 outline-none"
+              style={{ borderColor: "#d1d5db", focus: "#60a5fa" }} // gray-300 + blue-400
             />
             <input
               type="text"
@@ -98,14 +104,16 @@ export default function App() {
                 if (e.target.value.length <= 58) setNama(e.target.value);
               }}
               placeholder="Nama Lengkap"
-              className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 outline-none"
+              className="w-full border rounded-lg px-3 py-2 focus:ring-2 outline-none"
+              style={{ borderColor: "#d1d5db" }}
             />
             <input
               type="text"
               value={ttl}
               onChange={(e) => setTtl(e.target.value)}
               placeholder="Tanggal Lahir"
-              className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 outline-none"
+              className="w-full border rounded-lg px-3 py-2 focus:ring-2 outline-none"
+              style={{ borderColor: "#d1d5db" }}
             />
             <input
               type="text"
@@ -114,18 +122,24 @@ export default function App() {
               onBlur={() => setIsBack(false)}
               onChange={(e) => setStatus(e.target.value)}
               placeholder="Status"
-              className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 outline-none"
+              className="w-full border rounded-lg px-3 py-2 focus:ring-2 outline-none"
+              style={{ borderColor: "#d1d5db" }}
             />
             <input
               type="file"
               accept="image/*"
               onChange={(e) => setPhoto(URL.createObjectURL(e.target.files[0]))}
-              className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 outline-none"
+              className="w-full border rounded-lg px-3 py-2 focus:ring-2 outline-none"
+              style={{ borderColor: "#d1d5db" }}
             />
             <button
               type="button"
               onClick={handleGenerateLink}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg mt-2"
+              className="w-full font-semibold py-2 rounded-lg mt-2"
+              style={{
+                backgroundColor: "#2563eb", // blue-600
+                color: "#fff",
+              }}
             >
               Generate Link
             </button>
@@ -133,13 +147,17 @@ export default function App() {
         </div>
 
         {/* Card Preview */}
-        <div className="bg-blue-800 flex items-center justify-center p-8">
+        <div
+          className="flex items-center justify-center p-8"
+          style={{ backgroundColor: "#1e3a8a" }} // bg-blue-800
+        >
           <motion.div
-            className="relative w-96 h-60 rounded-xl shadow-lg text-white border border-white/30"
+            className="relative w-96 h-60 rounded-xl shadow-lg text-white border"
             animate={{ rotateY: isBack ? 180 : 0 }}
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.6 }}
             style={{
+              borderColor: "rgba(255,255,255,0.3)",
               transformStyle: "preserve-3d",
               fontFamily: "Arial, sans-serif",
             }}
@@ -147,54 +165,66 @@ export default function App() {
             {/* Front Kartu */}
             <div
               ref={frontRef}
-              className="absolute inset-0 rounded-xl p-6 flex flex-col justify-between"
+              className="w-full h-full rounded-xl p-6 flex flex-col justify-between"
               style={{
                 backfaceVisibility: "hidden",
-                background: "linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)", // hex-safe
+                background: "linear-gradient(135deg, #3b82f6, #1d4ed8)", // fixed HEX
+                color: "#fff",
               }}
             >
-              {/* Header */}
+              {/* header */}
               <div className="flex justify-between items-center">
-                <h3 className="text-lg font-bold truncate max-w-[60%]">
+                <h3 className="text-lg font-bold max-w-[60%]">
                   Kartu Tanda Anggota
                 </h3>
-                <span className="text-sm truncate max-w-[35%]">
-                  📌 Medic KITA
-                </span>
+                <span className="text-sm max-w-[35%]">📌 Medic KITA</span>
               </div>
 
-              {/* Info + Foto */}
+              {/* info */}
               <div className="flex justify-between mt-4">
-                <div
-                  className="flex flex-col gap-1"
-                  style={{ maxWidth: "calc(100% - 7rem)" }}
-                >
-                  <p className="tracking-wide text-sm truncate">
-                    Jabatan: {jabatan || "Jabatan"}
-                  </p>
-                  <p className="font-semibold text-lg truncate" title={nama}>
-                    {nama || "Nama Anggota"}
-                  </p>
-
-                  {/* Status di kiri bawah */}
+                <div className="flex flex-col gap-1 max-w-[calc(100%-7rem)]">
+                  <p className="text-sm">Jabatan: {jabatan || "Jabatan"}</p>
+                  <p className="font-semibold">{nama || "Nama Anggota"}</p>
                   {status && (
-                    <div className="mt-auto text-sm font-semibold bg-white/20 px-3 py-1 rounded w-max text-center">
+                    <span
+                      className="absolute bottom-4 left-4 text-sm font-semibold"
+                      style={{
+                        padding: "0.50rem 0.75rem",
+                        borderRadius: "0.5rem",
+                      }}
+                    >
                       {status}
-                    </div>
+                    </span>
                   )}
                 </div>
 
-                {/* Foto + TTL */}
                 {photo && (
                   <div className="flex flex-col items-center w-28 flex-shrink-0">
-                    <div className="w-28 h-28 overflow-hidden border border-white/40 rounded">
+                    <div
+                      className="flex items-center justify-center overflow-hidden"
+                      style={{
+                        width: "7rem",
+                        height: "7rem",
+                        backgroundColor: "#fff",
+                        border: "1px solid rgba(255,255,255,0.4)",
+                        borderRadius: "0.5rem",
+                      }}
+                    >
                       <img
                         src={photo}
                         alt="Profile"
-                        className="w-full h-full object-cover"
+                        className="max-w-full max-h-full object-contain"
                       />
                     </div>
-                    <p className="mt-2 text-sm opacity-80">{ttl || "TTL"}</p>
+                    <p
+                      style={{
+                        marginTop: "0.5rem",
+                        fontSize: "0.875rem",
+                        opacity: 0.8,
+                      }}
+                    >
+                      {ttl || "TTL"}
+                    </p>
                   </div>
                 )}
               </div>
@@ -206,25 +236,30 @@ export default function App() {
               style={{
                 backfaceVisibility: "hidden",
                 transform: "rotateY(180deg)",
-                background: "linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%)", // hex-safe
+                background: "linear-gradient(135deg, #1d4ed8, #1e40af)", // HEX biru
+                color: "#fff",
               }}
             >
-              <h3 className="text-white text-lg font-bold text-center mb-4">
-                Detail Anggota
-              </h3>
+              <h3 className="text-center font-semibold mb-4">Detail Anggota</h3>
 
-              <div className="bg-white/20 p-3 rounded mb-2 text-center overflow-hidden">
-                <p className="text-sm font-semibold truncate" title={nama}>
+              <div
+                className="p-2 rounded-md mb-2 text-center overflow-hidden"
+                style={{ backgroundColor: "rgba(255,255,255,0.2)" }}
+              >
+                <p className="font-semibold text-sm truncate">
                   {(nama || "Nama Anggota").split(" ").slice(0, 10).join(" ")}
                 </p>
-                <p className="text-xs truncate">{jabatan || "Jabatan"}</p>
+                <p className="text-xs">{jabatan || "Jabatan"}</p>
               </div>
 
-              <div className="bg-white/20 p-3 rounded text-center overflow-hidden">
-                <p className="text-sm font-semibold truncate">
+              <div
+                className="p-2 rounded-md text-center overflow-hidden"
+                style={{ backgroundColor: "rgba(255,255,255,0.2)" }}
+              >
+                <p className="font-semibold text-sm">
                   {ttl || "Tanggal Lahir"}
                 </p>
-                <p className="text-xs truncate">{status || "Status"}</p>
+                <p className="text-xs">{status || "Status"}</p>
               </div>
             </div>
           </motion.div>
