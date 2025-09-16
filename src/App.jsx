@@ -16,7 +16,12 @@ export default function App() {
     if (!frontRef.current) return;
 
     // Render kartu depan → PNG
-    const canvas = await html2canvas(frontRef.current, { scale: 2 });
+    const canvas = await html2canvas(frontRef.current, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: "#22c55e", // sama kayak warna kartu depan
+    });
+
     const dataUrl = canvas.toDataURL("image/png");
     const blob = await (await fetch(dataUrl)).blob();
 
