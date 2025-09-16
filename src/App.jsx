@@ -164,10 +164,16 @@ export default function App() {
         {/* Card Preview */}
         <div className="bg-[#065f46] flex items-center justify-center p-8">
           <motion.div
-            className="relative w-80 h-48 rounded-xl shadow-lg text-white"
+            ref={frontRef} // bisa langsung pindahin ke sini
+            className="relative rounded-xl shadow-lg text-white"
+            style={{
+              width: "400px", // fix width
+              height: "250px", // fix height
+              fontFamily: "Arial, sans-serif", // biar font gak lari
+              transformStyle: "preserve-3d",
+            }}
             animate={{ rotateY: isBack ? 180 : 0 }}
             transition={{ duration: 0.6 }}
-            style={{ transformStyle: "preserve-3d" }}
           >
             {/* Front */}
             <div
