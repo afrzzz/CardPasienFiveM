@@ -12,27 +12,50 @@ export default function App() {
 
   const frontRef = useRef(null); // ✅ ref hanya untuk tampilan depan
 
-  const handleGenerateLink = () => {
-    const url = `${window.location.origin}/card?nama=${encodeURIComponent(
-      nama
-    )}&ttl=${encodeURIComponent(ttl)}&nomor=${encodeURIComponent(
-      nomor
-    )}&status=${encodeURIComponent(status)}`;
+  const handleGenerateLink = async () => {
+    if (!frontRef.current) return;
 
-    navigator.clipboard.writeText(url);
+    // Render kartu depan → PNG
+    const canvas = await html2canvas(frontRef.current, { scale: 2 });
+    const dataUrl = canvas.toDataURL("image/png");
+    const blob = await (await fetch(dataUrl)).blob();
 
-    Swal.fire({
-      title: "✅ Link berhasil dibuat!",
-      html: `
+    // 🔗 Ganti dengan Webhook Discord kamu
+    const webhookUrl =
+      "https://discord.com/api/webhooks/1417390391719759914/fRAEuHB2l-1YBtYDEKF_pyzGhT99ziqO3BQ5sLT62nzV9n0KsUpk17ZVjpKTFt6OSoxl";
+    const formData = new FormData();
+    formData.append("file", blob, `${nama || "kartu_pasien"}.png`);
+
+    try {
+      const response = await fetch(webhookUrl, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) throw new Error("Upload gagal");
+      const result = await response.json();
+
+      // ✅ Ambil link file CDN dari Discord
+      const fileUrl = result.attachments[0].url;
+
+      await navigator.clipboard.writeText(fileUrl);
+
+      Swal.fire({
+        title: "✅ Link berhasil dibuat!",
+        html: `
         <p>Link kartu pasien sudah disalin ke clipboard.</p>
-        <p class="mt-2"><a href="${url}" target="_blank" class="text-green-600 underline">🔗 Buka Link</a></p>
+        <p class="mt-2"><a href="${fileUrl}" target="_blank" class="text-green-600 underline">🔗 Buka Link</a></p>
       `,
-      icon: "success",
-      background: "#f0fdf4",
-      color: "#166534",
-      confirmButtonText: "Oke",
-      confirmButtonColor: "#16a34a",
-    });
+        icon: "success",
+        background: "#f0fdf4",
+        color: "#166534",
+        confirmButtonText: "Oke",
+        confirmButtonColor: "#16a34a",
+      });
+    } catch (err) {
+      console.error(err);
+      Swal.fire("❌ Error", "Gagal upload ke Discord Webhook", "error");
+    }
   };
 
   const handleDownloadCard = async () => {
