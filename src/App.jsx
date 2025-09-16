@@ -167,6 +167,7 @@ export default function App() {
         </div>
 
         {/* Card Preview */}
+        {/* Card Preview */}
         <div className="bg-[#065f46] flex items-center justify-center p-8">
           <motion.div
             className="relative rounded-xl shadow-lg text-white"
@@ -175,8 +176,6 @@ export default function App() {
               height: "250px",
               fontFamily: "Arial, sans-serif",
               transformStyle: "preserve-3d",
-              borderRadius: "1.5rem", // ✅ lebih rounded (24px)
-              overflow: "hidden", // biar isi ikut terpotong sesuai rounded
             }}
             animate={{ rotateY: isBack ? 180 : 0 }}
             transition={{ duration: 0.6 }}
