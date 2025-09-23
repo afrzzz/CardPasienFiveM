@@ -87,7 +87,7 @@ export default function App() {
         JSON.stringify({
           username: "Kartu ASKES Bot",
           content: `
-**Askes -** ${nama}
+**Askes** ${nama}
 **Masa Berlaku Sampai :** ${masaBerlaku}`,
         })
       );
@@ -198,14 +198,7 @@ export default function App() {
                 value: kelas,
                 set: setKelas,
                 type: "select", // tambahin type
-                options: [
-                  "Medis",
-                  "Kepolisian",
-                  "Pemerintah",
-                  "Pedagang",
-                  "Mekanik",
-                  "Kita Trans",
-                ], // daftar opsi
+                options: ["Kepolisian"], // daftar opsi
               },
               {
                 id: "rumahSakit",
@@ -435,7 +428,7 @@ export default function App() {
                   <div>
                     <p style={{ fontSize: "11px", opacity: 0.75 }}>Instansi</p>
                     <p style={{ fontSize: "14px", fontWeight: "600" }}>
-                      {kelas || "Kepolisian/Pemerintah"}
+                      {kelas || "(isi sesuai instansi)"}
                     </p>
                   </div>
                   <div style={{ textAlign: "right" }}>
