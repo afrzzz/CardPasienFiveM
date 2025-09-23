@@ -62,82 +62,63 @@ export default function App() {
       return;
     }
 
-    if (!captureRef.current) return;
-    Swal.close();
-
     try {
-      const cardCanvas = await html2canvas(captureRef.current, {
-        scale: 4,
-        useCORS: true,
-        backgroundColor: null,
+      Swal.fire({
+        title: "Sedang memproses...",
+        text: "Mohon tunggu sebentar",
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
       });
 
-      const padding = 60;
-      const finalCanvas = document.createElement("canvas");
-      finalCanvas.width = cardCanvas.width + padding * 2;
-      finalCanvas.height = cardCanvas.height + padding * 2;
+      const canvas = await html2canvas(captureRef.current, {
+        scale: 3, // lebih tinggi → lebih tajam
+        useCORS: true, // biar gambar eksternal bisa ikut
+        backgroundColor: null, // biar transparan kalau perlu
+      });
 
-      const ctx = finalCanvas.getContext("2d");
-      ctx.clearRect(0, 0, finalCanvas.width, finalCanvas.height);
-
-      ctx.shadowColor = "rgba(0,0,0,0.25)";
-      ctx.shadowBlur = 40;
-      ctx.shadowOffsetX = 0;
-      ctx.shadowOffsetY = 20;
-
-      ctx.drawImage(cardCanvas, padding, padding);
-
-      const dataUrl = finalCanvas.toDataURL("image/png");
-      const blob = await (await fetch(dataUrl)).blob();
-
-      const webhookUrl =
-        "https://discord.com/api/webhooks/1417390391719759914/fRAEuHB2l-1YBtYDEKF_pyzGhT99ziqO3BQ5sLT62nzV9n0KsUpk17ZVjpKTFt6OSoxl"; // ganti dengan webhook kamu
+      const blob = await new Promise((resolve) => canvas.toBlob(resolve));
 
       const formData = new FormData();
       formData.append("file", blob, `kartu-askes-${nama || "kosong"}.png`);
 
+      // Tambahkan teks terpisah (bisa dicari di Discord)
+      formData.append(
+        "payload_json",
+        JSON.stringify({
+          username: "Kartu ASKES Bot",
+          content: `🪪 **DATA KARTU ASURANSI KESEHATAN BARU**
+**Nama:** ${nama}
+**Masa Berlaku (14 Hari):** ${masaBerlaku}`,
+        })
+      );
+
+      const response = await fetch(
+        "https://discord.com/api/webhooks/1419935037905698826/e6BuRSH-nV289iq20z7_N0lqLvA9o6-f_PkMCwibIx-S6TY9vOUfumTuo7YSkLQpTsSS", // ganti webhook kamu
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (!response.ok) throw new Error("Gagal kirim ke Discord");
+
+      const responseData = await response.json();
+
+      // Get the image URL from Discord's response
+      const imageUrl = responseData.attachments[0].url;
+
+      // Copy the image URL to clipboard
+      await navigator.clipboard.writeText(imageUrl);
+
       Swal.fire({
-        title: "Sedang mengunggah...",
-        text: "Mohon tunggu sebentar.",
-        allowOutsideClick: false,
-        didOpen: () => {
-          Swal.showLoading();
-        },
-      });
-
-      const response = await fetch(webhookUrl, {
-        method: "POST",
-        body: formData,
-      });
-
-      Swal.close();
-
-      if (!response.ok) throw new Error("Upload gagal");
-      const result = await response.json();
-      const fileUrl = result.attachments[0].url;
-
-      const el = document.createElement("textarea");
-      el.value = fileUrl;
-      document.body.appendChild(el);
-      el.select();
-      document.execCommand("copy");
-      document.body.removeChild(el);
-
-      Swal.fire({
-        title: "✅ Link berhasil dibuat!",
-        html: `
-          <p>Link kartu sudah disalin ke clipboard.</p>
-          <p class="mt-2"><a href="${fileUrl}" target="_blank" style="color:#2563eb; text-decoration:underline;">🔗 Buka Link</a></p>
-        `,
         icon: "success",
-        background: "#eff6ff",
-        color: "#1e3a8a",
-        confirmButtonText: "Oke",
-        confirmButtonColor: "#2563eb",
+        title: "✅ Berhasil!",
+        text: "Gambar telah dikirim ke Discord dan link telah disalin ke clipboard!",
+        confirmButtonText: "OK",
       });
     } catch (err) {
       console.error(err);
-      Swal.fire("❌ Error", "Gagal mengunggah ke Discord Webhook", "error");
+      Swal.fire("❌ Error", "Gagal mengirim data ke Discord", "error");
     }
   };
 
