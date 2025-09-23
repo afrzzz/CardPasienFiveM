@@ -496,7 +496,7 @@ export default function App() {
                     marginTop: "8px",
                   }}
                 >
-                  *Tidak berlaku di area terjal (Gunung, Tebing, Laut)
+                  *Tidak berlaku di area terjal & keadaan tenggelam
                 </p>
               </div>
             </div>
