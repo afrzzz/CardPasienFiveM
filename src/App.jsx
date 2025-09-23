@@ -87,8 +87,8 @@ export default function App() {
         JSON.stringify({
           username: "Kartu ASKES Bot",
           content: `
-**Nama:** ${nama}
-**Masa Berlaku (14 Hari):** ${masaBerlaku}`,
+**Askes -** ${nama}
+**Masa Berlaku Sampai :** ${masaBerlaku}`,
         })
       );
 
@@ -120,6 +120,15 @@ export default function App() {
       console.error(err);
       Swal.fire("❌ Error", "Gagal mengirim data ke Discord", "error");
     }
+  };
+  const formatTanggal = (val) => {
+    if (!val) return "";
+    const d = new Date(val);
+    return d.toLocaleDateString("id-ID", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    });
   };
 
   return (
@@ -181,7 +190,7 @@ export default function App() {
                 label: "Tanggal Lahir",
                 value: ttl,
                 set: setTtl,
-                placeholder: "01 January 2000",
+                type: "date",
               },
               {
                 id: "instansi",
@@ -190,6 +199,7 @@ export default function App() {
                 set: setKelas,
                 type: "select", // tambahin type
                 options: [
+                  "Medis",
                   "Kepolisian",
                   "Pemerintah",
                   "Pedagang",
@@ -209,33 +219,8 @@ export default function App() {
                 id: "tanggalPembuatan",
                 label: "Tanggal Pembuatan (tekan logo kalender)",
                 value: tanggalPembuatan,
-                set: (val) => {
-                  // simpan raw value dulu
-                  setTanggalPembuatan(val);
-
-                  // parse date
-                  const d = new Date(val);
-                  if (!isNaN(d)) {
-                    // format tanggal pembuatan
-                    const options = {
-                      day: "2-digit",
-                      month: "long",
-                      year: "numeric",
-                    };
-                    const formatted = d.toLocaleDateString("en-GB", options);
-                    setTanggalPembuatan(formatted);
-
-                    // hitung masa berlaku = +14 hari
-                    const masa = new Date(d);
-                    masa.setDate(masa.getDate() + 14);
-                    const masaFormatted = masa.toLocaleDateString(
-                      "en-GB",
-                      options
-                    );
-                    setMasaBerlaku(masaFormatted);
-                  }
-                },
-                placeholder: "01 January 2025",
+                set: setTanggalPembuatan,
+                type: "date",
               },
               {
                 id: "masaBerlaku",
@@ -290,7 +275,7 @@ export default function App() {
                 ) : (
                   <input
                     id={f.id}
-                    type={f.id === "tanggalPembuatan" ? "date" : "text"}
+                    type={f.type || "text"}
                     value={f.value}
                     onChange={(e) => f.set(e.target.value)}
                     placeholder={f.placeholder}
@@ -362,7 +347,7 @@ export default function App() {
               height: "240px",
               borderRadius: "16px",
               boxShadow: "0 10px 20px rgba(0,0,0,0.25)",
-              padding: "20px",
+              padding: "12px 20px 20px 20px", // 🔹 padding atas diperkecil
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",
@@ -407,6 +392,7 @@ export default function App() {
                   letterSpacing: "1px",
                   textTransform: "uppercase",
                   marginBottom: "8px",
+                  marginTop: "0",
                   textAlign: "center",
                 }}
               >
@@ -433,8 +419,8 @@ export default function App() {
                     <p style={{ fontSize: "11px", opacity: 0.75 }}>
                       Tgl. Lahir
                     </p>
-                    <p style={{ fontWeight: "600", fontSize: "14px" }}>
-                      {ttl || "01 January 2000"}
+                    <p style={{ fontSize: "13px", fontWeight: "600" }}>
+                      {formatTanggal(ttl) || "01 September 2025"}
                     </p>
                   </div>
                 </div>
@@ -478,7 +464,7 @@ export default function App() {
                   <div>
                     <p>Tanggal Pembuatan</p>
                     <p style={{ fontSize: "13px", fontWeight: "600" }}>
-                      {tanggalPembuatan || "01 September 2025"}
+                      {formatTanggal(tanggalPembuatan) || "01 September 2025"}
                     </p>
                   </div>
                   <div>
