@@ -86,7 +86,7 @@ export default function App() {
         "payload_json",
         JSON.stringify({
           username: "Kartu ASKES Bot",
-          content: `🪪 **DATA KARTU ASURANSI KESEHATAN BARU**
+          content: `
 **Nama:** ${nama}
 **Masa Berlaku (14 Hari):** ${masaBerlaku}`,
         })
