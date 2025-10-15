@@ -4,7 +4,7 @@ import App from "./App";
 import Landing from "./components/Landing";
 import Navbar from "./components/Navbar";
 import "./index.css";
-import StrukturPetinggi from "./components/StrukturPetinggi";
+import StrukturPetinggi from "./components/DataPetinggi";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>

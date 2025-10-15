@@ -20,7 +20,7 @@ export default function PatientForm({
       id: "nama",
       label: "Nama Lengkap",
       value: nama,
-      set: setNama,
+      set: (v) => setNama(v.slice(0, 18)), // batasi max 18 karakter
       placeholder: "Nama Lengkap (18 Char)",
     },
     {
@@ -57,7 +57,6 @@ export default function PatientForm({
       id: "masaBerlaku",
       label: "Masa Berlaku (otomatis)",
       value: masaBerlaku,
-      set: () => {},
       placeholder: "14 Hari dari Tanggal Pembuatan",
       readOnly: true,
     },
@@ -100,6 +99,7 @@ export default function PatientForm({
             >
               {f.label}
             </label>
+
             {f.type === "select" ? (
               <select
                 id={f.id}
@@ -111,6 +111,7 @@ export default function PatientForm({
                   borderRadius: "8px",
                   padding: "8px 16px",
                   outline: "none",
+                  cursor: "pointer",
                   transition: "all 0.2s",
                 }}
                 onFocus={(e) => {
@@ -134,9 +135,8 @@ export default function PatientForm({
                 id={f.id}
                 type={f.type || "text"}
                 value={f.value}
-                onChange={(e) => f.set(e.target.value)}
+                onChange={(e) => (f.set ? f.set(e.target.value) : undefined)} // hanya jalankan kalau ada set()
                 placeholder={f.placeholder}
-                maxLength={f.id === "nama" ? 18 : undefined}
                 readOnly={f.readOnly}
                 disabled={f.disabled}
                 style={{
@@ -148,9 +148,10 @@ export default function PatientForm({
                   transition: "all 0.2s",
                   backgroundColor: f.disabled ? "#f3f4f6" : "white",
                   color: f.disabled ? "#9ca3af" : "black",
+                  cursor: f.disabled ? "not-allowed" : "text",
                 }}
                 onFocus={(e) => {
-                  if (!f.readOnly) {
+                  if (!f.readOnly && !f.disabled) {
                     e.target.style.borderColor = "#22c55e";
                     e.target.style.boxShadow = "0 0 0 2px #bbf7d0";
                   }
@@ -178,6 +179,7 @@ export default function PatientForm({
             backgroundColor: isScriptReady ? "#16a34a" : "#9ca3af",
             color: "#fff",
             cursor: isScriptReady ? "pointer" : "not-allowed",
+            border: "none",
           }}
           disabled={!isScriptReady}
         >

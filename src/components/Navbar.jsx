@@ -1,8 +1,12 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { Menu, X } from "lucide-react";
 
 export default function Navbar() {
   const location = useLocation();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   const navItems = [
     { path: "/", label: "Beranda" },
@@ -10,88 +14,173 @@ export default function Navbar() {
     { path: "/strukturpetinggi", label: "Struktur Petinggi" },
   ];
 
-  return (
-    <nav
-      style={{
-        width: "100%",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "14px 28px",
-        background: "linear-gradient(90deg,#0ea5e9,#6366f1)",
-        color: "#fff",
-        boxShadow: "0 6px 18px rgba(0,0,0,0.12)",
-        position: "sticky",
-        top: 0,
-        zIndex: 50,
-        backdropFilter: "blur(8px)",
-      }}
-    >
-      {/* Logo */}
-      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-        <div
-          style={{
-            width: 44,
-            height: 44,
-            borderRadius: 12,
-            background: "rgba(255,255,255,0.15)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontWeight: 800,
-            fontSize: 18,
-            letterSpacing: 1,
-          }}
-        >
-          KTA
-        </div>
-        <div>
-          <div style={{ fontWeight: 700, fontSize: 16 }}>KISAH TANAH AIR</div>
-          <div style={{ fontSize: 12, opacity: 0.9 }}>Rumah Sakit Umum</div>
-        </div>
-      </div>
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 40);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
-      {/* Navigation Links */}
-      <div
-        style={{
-          display: "flex",
-          gap: 12,
-          alignItems: "center",
-          flexWrap: "wrap",
-        }}
+  const linkVariants = {
+    hidden: { opacity: 0, y: -8 },
+    visible: (i) => ({
+      opacity: 1,
+      y: 0,
+      transition: { delay: i * 0.12, duration: 0.4, ease: "easeOut" },
+    }),
+  };
+
+  return (
+    <>
+      {/* NAVBAR WRAPPER */}
+      <motion.nav
+        initial={{ y: -60, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className={`fixed top-0 left-0 w-full z-50 transition-all duration-700 backdrop-blur-lg border-b ${
+          scrolled
+            ? "bg-white/80 border-sky-100 shadow-md"
+            : "bg-white/40 border-transparent"
+        }`}
       >
-        {navItems.map((item) => (
-          <Link
-            key={item.path}
-            to={item.path}
-            style={{
-              color: "#fff",
-              textDecoration: "none",
-              padding: "8px 14px",
-              borderRadius: 8,
-              fontWeight: 500,
-              transition: "background 0.25s, transform 0.25s",
-              background:
-                location.pathname === item.path
-                  ? "rgba(255,255,255,0.2)"
-                  : "transparent",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = "rgba(255,255,255,0.1)";
-              e.currentTarget.style.transform = "translateY(-2px)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background =
-                location.pathname === item.path
-                  ? "rgba(255,255,255,0.2)"
-                  : "transparent";
-              e.currentTarget.style.transform = "translateY(0)";
-            }}
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-3 md:py-4">
+          {/* LOGO SECTION */}
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            className="flex items-center gap-3 cursor-pointer select-none"
           >
-            {item.label}
-          </Link>
-        ))}
-      </div>
-    </nav>
+            {/* Logo Box */}
+            <motion.div
+              animate={{
+                backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+              }}
+              transition={{
+                duration: 8,
+                ease: "linear",
+                repeat: Infinity,
+              }}
+              className="relative w-12 h-12 rounded-xl bg-[length:200%_200%] bg-gradient-to-r from-sky-400 via-indigo-500 to-blue-600 flex items-center justify-center font-extrabold text-white text-lg shadow-md"
+            >
+              <motion.span
+                className="absolute inset-0 bg-gradient-to-r from-white/25 to-transparent opacity-60"
+                animate={{ x: ["-150%", "150%"] }}
+                transition={{
+                  duration: 3,
+                  ease: "easeInOut",
+                  repeat: Infinity,
+                }}
+              />
+              <span className="relative z-10">KiTA</span>
+            </motion.div>
+
+            {/* Text beside logo */}
+            <div className="overflow-hidden">
+              <motion.h1
+                initial={{ y: 10, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.5 }}
+                className="text-slate-900 font-semibold text-base md:text-lg tracking-wide"
+                style={{ textShadow: "0 0 8px rgba(56,189,248,0.25)" }}
+              >
+                <motion.span
+                  animate={{ opacity: [1, 0.9, 1], y: [0, -1, 0] }}
+                  transition={{
+                    duration: 4,
+                    repeat: Infinity,
+                    repeatType: "mirror",
+                    ease: "easeInOut",
+                  }}
+                >
+                  KISAH TANAH AIR
+                </motion.span>
+              </motion.h1>
+              <p className="text-[11px] text-slate-600/80 italic leading-none">
+                Rumah Sakit Umum
+              </p>
+            </div>
+          </motion.div>
+
+          {/* DESKTOP LINKS */}
+          <div className="hidden md:flex gap-6 items-center">
+            {navItems.map((item, i) => {
+              const isActive = location.pathname === item.path;
+              return (
+                <motion.div
+                  key={item.path}
+                  custom={i}
+                  initial="hidden"
+                  animate="visible"
+                  variants={linkVariants}
+                  whileHover={{ y: -2, scale: 1.04 }}
+                >
+                  <Link
+                    to={item.path}
+                    className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300 ${
+                      isActive
+                        ? "text-sky-700 bg-sky-100/70 shadow-sm"
+                        : "text-slate-700 hover:text-sky-700 hover:bg-sky-50"
+                    }`}
+                  >
+                    {item.label}
+                    {isActive && (
+                      <motion.span
+                        layoutId="underline"
+                        className="absolute bottom-0 left-0 w-full h-[2px] bg-sky-600/70 rounded-full"
+                        transition={{ duration: 0.3 }}
+                      />
+                    )}
+                  </Link>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          {/* MOBILE MENU TOGGLE */}
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="md:hidden text-slate-800 hover:text-sky-700 transition"
+          >
+            {menuOpen ? <X size={26} /> : <Menu size={26} />}
+          </button>
+        </div>
+      </motion.nav>
+
+      {/* Spacer supaya konten gak ketutup navbar */}
+      <div className="h-[72px] md:h-[80px]" />
+
+      {/* MOBILE MENU */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.25 }}
+            className={`fixed top-[72px] left-0 w-full z-40 md:hidden backdrop-blur-2xl border-t border-sky-100 ${
+              scrolled ? "bg-white/85 shadow-md" : "bg-white/60"
+            }`}
+          >
+            <div className="flex flex-col items-start px-6 py-5 gap-2">
+              {navItems.map((item) => {
+                const isActive = location.pathname === item.path;
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    onClick={() => setMenuOpen(false)}
+                    className={`w-full px-4 py-3 rounded-md font-medium text-sm transition-all duration-300 ${
+                      isActive
+                        ? "bg-sky-100 text-sky-800"
+                        : "text-slate-700 hover:bg-sky-50 hover:text-sky-800"
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
