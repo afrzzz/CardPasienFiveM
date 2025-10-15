@@ -3,17 +3,22 @@ import { useEffect, useState } from "react";
 import { FaHospitalUser } from "react-icons/fa";
 
 const executives = [
-  { id: 1, name: "Dr. Ahmad Santoso", role: "Direktur Utama", src: "/ceo.jpg" },
+  { id: 1, name: "Dr.", role: "Direktur Utama", src: "/ceo.jpg" },
   {
     id: 2,
-    name: "Dr. Lestari Widya",
+    name: "Dr.",
     role: "Wakil Direktur",
     src: "/wakil.jpg",
   },
-  { id: 3, name: "Dr. Bima Prakoso", role: "HRD", src: "/hrd.jpg" },
-  { id: 4, name: "Dr. Nina Anggraini", role: "Komdis", src: "/komdis.jpg" },
-  { id: 5, name: "Dr. Rudi Hartono", role: "Keuangan", src: "/keuangan.jpg" },
-  { id: 6, name: "Dr. Wulan Sari", role: "Pemasaran", src: "/pemasaran.jpg" },
+  { id: 3, name: "Dr.", role: "HRD", src: "/hrd.jpg" },
+  { id: 4, name: "Dr.", role: "Komdis", src: "/komdis.jpg" },
+  { id: 5, name: "Dr.", role: "Keuangan", src: "/keuangan.jpg" },
+  { id: 6, name: "Dr.", role: "Pemasaran", src: "/pemasaran.jpg" },
+  { id: 7, name: "Dr.", role: "Pemasaran", src: "/pemasaran.jpg" },
+  { id: 8, name: "Dr.", role: "Pemasaran", src: "/pemasaran.jpg" },
+  { id: 9, name: "Dr.", role: "Pemasaran", src: "/pemasaran.jpg" },
+  { id: 10, name: "Dr.", role: "Pemasaran", src: "/pemasaran.jpg" },
+  { id: 11, name: "Dr.", role: "Pemasaran", src: "/pemasaran.jpg" },
 ];
 
 export default function StrukturPetinggi() {
