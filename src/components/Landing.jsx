@@ -137,7 +137,7 @@ export default function Beranda() {
           aria-label="Buat janji konsultasi sekarang"
           className="px-8 py-3 bg-gradient-to-r from-indigo-600 to-sky-500 text-white font-semibold rounded-full shadow-md hover:shadow-lg hover:scale-105 focus:ring-2 focus:ring-indigo-400 focus:outline-none transition-all duration-300"
         >
-          Struktur Petinggi
+          CAREER COMING SOON
         </button>
       </motion.div>
 
