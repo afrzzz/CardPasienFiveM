@@ -147,7 +147,7 @@ export default function Beranda() {
         <span className="font-semibold text-indigo-600">
           Rumah Sakit Kisah Tanah Air
         </span>{" "}
-        — Sehat Bersama Kami.
+        — Created by Afrzzz.
       </footer>
     </main>
   );
