@@ -1,6 +1,7 @@
 import { motion, useScroll, useTransform, useInView } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 import { FaHeartbeat, FaHospitalUser, FaStethoscope } from "react-icons/fa";
+import ChatAssistant from "./ChatAssistant";
 
 function FeatureCard({ icon, title, desc, delay = 0 }) {
   const ref = useRef(null);
@@ -149,6 +150,9 @@ export default function Beranda() {
         </span>{" "}
         — Created by Afrzzz.
       </footer>
+
+      {/* Chat Assistant */}
+      <ChatAssistant />
     </main>
   );
 }

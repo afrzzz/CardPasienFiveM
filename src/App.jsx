@@ -65,10 +65,10 @@ export default function App() {
         })
       );
 
-      const response = await fetch(
-        "https://discord.com/api/webhooks/1419935037905698826/e6BuRSH-nV289iq20z7_N0lqLvA9o6-f_PkMCwibIx-S6TY9vOUfumTuo7YSkLQpTsSS",
-        { method: "POST", body: formData }
-      );
+      const response = await fetch(import.meta.env.VITE_DISCORD_WEBHOOK_URL, {
+        method: "POST",
+        body: formData,
+      });
       if (!response.ok) throw new Error("Gagal kirim ke Discord");
       const responseData = await response.json();
       const imageUrl = responseData.attachments?.[0]?.url;

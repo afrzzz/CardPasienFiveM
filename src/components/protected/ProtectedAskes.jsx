@@ -9,7 +9,8 @@ export default function ProtectedAskes({ children }) {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const PASSWORD_BENAR = "MEDICKITA2";
+  const PASSWORD_BENAR =
+    import.meta.env.VITE_PROTECTED_PASSWORD || "MEDICKITA2";
 
   const handleSubmit = (e) => {
     e.preventDefault();
