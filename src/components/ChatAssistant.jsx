@@ -1,35 +1,117 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageCircle, X, Send, Bot, User } from "lucide-react";
+import { X, Send, Bot } from "lucide-react";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import ReactMarkdown from "react-markdown";
 
-const API_KEY = import.meta.env.VITE_GOOGLE_AI_API_KEY;
-const genAI = new GoogleGenerativeAI(API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+// 🔐 Ambil semua API key dari .env
+const API_KEYS = import.meta.env.VITE_GOOGLE_AI_API_KEY.split(",").map((k) =>
+  k.trim()
+);
 
 export default function ChatAssistant() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
     {
       id: 1,
-      text: "Halo! Saya KiTA Bot, asisten AI rumah sakit Kisah Tanah Air. Mau curhat atau tanya-tanya tentang kesehatan? Saya siap dengerin! 😊",
+      text: `**Yo! Gue KiTA Bot Curhat** 😎  
+Bukan dokter, tapi siap dengerin lo curhat atau tanya soal kesehatan.  
+Kalo butuh yang serius banget, **cus ke RS ya.**  
+Cari **Bu Lora**, dia ramah banget kok 😄`,
       sender: "bot",
       timestamp: new Date(),
     },
   ]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const [selectedMessageId, setSelectedMessageId] = useState(null);
+  const [apiIndex, setApiIndex] = useState(0); // key aktif
   const messagesEndRef = useRef(null);
-  const inputRef = useRef(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  const getModel = () => {
+    const key = API_KEYS[apiIndex];
+    const genAI = new GoogleGenerativeAI(key);
+    return genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
   };
 
   useEffect(() => {
-    scrollToBottom();
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  const formatTimestamp = (date) => {
+    return new Intl.DateTimeFormat("id-ID", {
+      hour: "2-digit",
+      minute: "2-digit",
+      day: "2-digit",
+      month: "short",
+    }).format(date);
+  };
+
+  const streamBotResponse = async (prompt, botMessageId) => {
+    let model = getModel();
+
+    try {
+      const result = await model.generateContentStream(prompt);
+      let streamedText = "";
+
+      for await (const chunk of result.stream) {
+        const chunkText = chunk.text();
+        streamedText += chunkText;
+
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === botMessageId ? { ...m, text: streamedText } : m
+          )
+        );
+      }
+    } catch (err) {
+      console.error("Stream error:", err);
+      const errorMsg = err.message?.toLowerCase() || "";
+
+      const isQuotaError =
+        errorMsg.includes("quota") ||
+        errorMsg.includes("exceeded") ||
+        errorMsg.includes("api key") ||
+        errorMsg.includes("unauthorized");
+
+      // 🔄 Kalau error API key, ganti ke key berikutnya
+      if (isQuotaError && apiIndex < API_KEYS.length - 1) {
+        const next = apiIndex + 1;
+        console.warn(
+          `⚠️ API Key #${apiIndex + 1} limit, ganti ke key #${next + 1}`
+        );
+        setApiIndex(next);
+
+        // Ulang pakai key baru
+        await streamBotResponse(prompt, botMessageId);
+        return;
+      }
+
+      // 🚫 Kalau semua key habis
+      if (apiIndex >= API_KEYS.length - 1) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now() + 10,
+            text: "😅 Semua API key udah limit nih, coba lagi nanti ya!",
+            sender: "bot",
+            timestamp: new Date(),
+          },
+        ]);
+      } else {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now() + 11,
+            text: "😅 Ada gangguan nih, coba lagi ya...",
+            sender: "bot",
+            timestamp: new Date(),
+          },
+        ]);
+      }
+    } finally {
+      setIsTyping(false);
+    }
+  };
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -40,48 +122,25 @@ export default function ChatAssistant() {
       sender: "user",
       timestamp: new Date(),
     };
-
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setIsTyping(true);
 
-    try {
-      const prompt = `Kamu adalah KiTA Bot, asisten AI yang asik, ramah, dan tidak formal untuk rumah sakit Kisah Tanah Air. Kamu suka curhat, bercanda ringan, dan selalu positif. Jawab pertanyaan user dengan cara yang santai, seperti teman ngobrol. Jika user curhat tentang kesehatan, beri dukungan dan saran umum (bukan diagnosis medis). Jika bukan tentang kesehatan, tetap asik dan bantu sebisa mungkin. Jangan pernah bilang kamu AI resmi, tapi kayak teman biasa.
+    const botMessageId = Date.now() + 1;
+    setMessages((prev) => [
+      ...prev,
+      { id: botMessageId, text: "", sender: "bot", timestamp: new Date() },
+    ]);
 
-Pertanyaan user: "${input}"
+    const prompt = `
+Kamu adalah Curhat Bot, chatbot gen-z dari Rumah Sakit Kisah Tanah Air.
+Gaya bicaramu santai, seperti gen z, agak tengil tapi tetap sopan dan empatik.
+Gunakan bahasa anak muda tapi jangan lebay.
 
-Jawab dengan bahasa Indonesia yang santai dan ramah.`;
+User: "${input}"
+`;
 
-      console.log("Mengirim ke Gemini:", prompt);
-
-      // ✅ ini versi SDK terbaru
-      const result = await model.generateContent([prompt]);
-      const response = await result.response;
-      const botText = response.text();
-
-      console.log("Jawaban dari Gemini:", botText);
-
-      const botMessage = {
-        id: Date.now() + 1,
-        text: botText,
-        sender: "bot",
-        timestamp: new Date(),
-      };
-
-      setMessages((prev) => [...prev, botMessage]);
-    } catch (error) {
-      console.error("Error generating response:", error);
-
-      const fallbackMessage = {
-        id: Date.now() + 1,
-        text: "Ups... sepertinya koneksi ke server AI lagi gangguan 😅 Coba lagi sebentar ya!",
-        sender: "bot",
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, fallbackMessage]);
-    } finally {
-      setIsTyping(false);
-    }
+    await streamBotResponse(prompt, botMessageId);
   };
 
   const handleKeyPress = (e) => {
@@ -93,164 +152,142 @@ Jawab dengan bahasa Indonesia yang santai dan ramah.`;
 
   return (
     <>
-      {/* Floating Button */}
+      {/* Tombol chat melayang */}
       <motion.button
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        whileHover={{ scale: 1.1, rotate: 5 }}
+        onClick={() => setIsOpen(!isOpen)}
+        className="fixed bottom-6 right-6 z-50 
+             bg-gradient-to-r from-violet-500 via-indigo-500 to-sky-500 
+             text-white p-5 rounded-full shadow-[0_0_25px_rgba(139,92,246,0.6)]
+             hover:shadow-[0_0_35px_rgba(99,102,241,0.9)]
+             hover:scale-110 transition-all duration-300 flex items-center justify-center"
+        whileHover={{ rotate: 8 }}
         whileTap={{ scale: 0.9 }}
-        onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-50 bg-gradient-to-r from-indigo-500 via-purple-500 to-sky-500 text-white p-4 rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 border-2 border-white/20"
       >
-        <motion.div
-          animate={{ rotate: [0, 10, -10, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-        >
-          <MessageCircle size={24} />
-        </motion.div>
+        {isOpen ? (
+          <X size={26} className="text-white drop-shadow-sm" />
+        ) : (
+          <motion.div
+            initial={{ scale: 1, opacity: 0.9 }}
+            animate={{
+              scale: [1, 1.2, 1],
+              opacity: [0.9, 1, 0.9],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="flex items-center justify-center"
+          >
+            <Bot size={26} className="text-white drop-shadow-md" />
+          </motion.div>
+        )}
       </motion.button>
 
-      {/* Chat Window */}
+      {/* Jendela chat */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.8, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.8, y: 20 }}
-            transition={{ duration: 0.3 }}
-            className="fixed bottom-24 right-6 z-50 w-80 h-96 bg-white/95 rounded-2xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden backdrop-blur-md"
+            initial={{ opacity: 0, y: 40, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 40, scale: 0.9 }}
+            transition={{ duration: 0.4, type: "spring" }}
+            className="fixed bottom-28 right-6 z-50 w-[400px] md:w-[420px] h-[560px] bg-white/70 backdrop-blur-md rounded-3xl shadow-[0_8px_30px_rgba(0,0,0,0.15)] flex flex-col border border-white/30 font-[Inter]"
           >
             {/* Header */}
-            <div className="bg-gradient-to-r from-indigo-500 via-purple-500 to-sky-500 text-white p-4 flex items-center justify-between relative overflow-hidden">
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"
-                animate={{ x: ["-100%", "100%"] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-              />
-              <div className="flex items-center gap-2 relative z-10">
-                <motion.div
-                  animate={{ rotate: [0, 360] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                >
-                  <Bot size={20} />
-                </motion.div>
-                <span className="font-semibold">KiTA Bot</span>
+            <div className="bg-gradient-to-r from-violet-500 via-indigo-500 to-sky-500 text-white px-5 py-4 flex items-center justify-between rounded-t-3xl">
+              <div className="flex items-center gap-2">
+                <Bot size={20} className="text-white/90" />
+                <span className="font-semibold tracking-wide text-base">
+                  KiTA Bot Curhat
+                </span>
               </div>
               <button
                 onClick={() => setIsOpen(false)}
-                className="hover:bg-white/20 rounded-full p-1 transition-colors relative z-10"
+                className="hover:bg-white/20 p-2 rounded-full transition"
               >
-                <X size={18} />
+                <X size={16} />
               </button>
             </div>
 
-            {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-3">
+            {/* Area pesan */}
+            <div className="flex-1 overflow-y-auto p-5 space-y-3 bg-gradient-to-b from-white/60 to-gray-50/70 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
               {messages.map((msg) => (
                 <motion.div
                   key={msg.id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className={`flex gap-2 ${
-                    msg.sender === "user" ? "justify-end" : "justify-start"
+                  transition={{ duration: 0.25 }}
+                  className={`flex flex-col ${
+                    msg.sender === "user" ? "items-end" : "items-start"
                   }`}
                 >
-                  {msg.sender === "bot" && (
-                    <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Bot size={16} className="text-indigo-600" />
-                    </div>
-                  )}
                   <motion.div
-                    className={`max-w-[70%] p-3 rounded-2xl text-sm leading-relaxed cursor-pointer ${
+                    className={`max-w-[80%] px-4 py-2.5 text-[15px] rounded-2xl leading-relaxed whitespace-pre-wrap break-words shadow-md font-[Manrope] ${
                       msg.sender === "user"
-                        ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg"
-                        : "bg-gradient-to-r from-gray-100 to-gray-200 text-gray-800 shadow-md"
-                    } ${
-                      selectedMessageId === msg.id
-                        ? "ring-2 ring-indigo-400 ring-opacity-50"
-                        : ""
+                        ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-br-none"
+                        : "bg-white/90 text-gray-800 border border-gray-200 rounded-bl-none text-left"
                     }`}
                     whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    transition={{ duration: 0.2 }}
-                    onClick={() =>
-                      setSelectedMessageId(
-                        selectedMessageId === msg.id ? null : msg.id
-                      )
-                    }
                   >
-                    <div className="whitespace-pre-wrap break-words">
-                      {msg.text}
-                    </div>
-                    {selectedMessageId === msg.id && (
-                      <motion.div
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className="mt-2 p-2 bg-black/10 rounded-lg text-xs text-gray-600"
-                      >
-                        {msg.sender === "bot"
-                          ? "Pesan dari KiTA Bot"
-                          : "Pesan Anda"}{" "}
-                        • {msg.timestamp.toLocaleTimeString()}
-                      </motion.div>
-                    )}
+                    <ReactMarkdown>{msg.text || "‎"}</ReactMarkdown>
                   </motion.div>
-                  {msg.sender === "user" && (
-                    <div className="w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center flex-shrink-0">
-                      <User size={16} className="text-white" />
-                    </div>
-                  )}
+                  <span
+                    className={`text-[11px] mt-1 opacity-70 ${
+                      msg.sender === "user"
+                        ? "text-right text-gray-200"
+                        : "text-left text-gray-500"
+                    }`}
+                  >
+                    {formatTimestamp(msg.timestamp)}
+                  </span>
                 </motion.div>
               ))}
 
-              {/* Typing Indicator */}
+              {/* Animasi bot ngetik */}
               {isTyping && (
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
+                  transition={{ repeat: Infinity, duration: 1.5 }}
                   className="flex gap-2 justify-start"
                 >
-                  <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Bot size={16} className="text-indigo-600" />
-                  </div>
-                  <div className="bg-gray-100 p-3 rounded-2xl">
-                    <div className="flex space-x-1">
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                      <div
-                        className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                        style={{ animationDelay: "0.1s" }}
-                      ></div>
-                      <div
-                        className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                        style={{ animationDelay: "0.2s" }}
-                      ></div>
-                    </div>
+                  <div className="bg-white/70 px-3 py-2 rounded-2xl flex space-x-1 border border-gray-200 shadow-sm">
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                    <div
+                      className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                      style={{ animationDelay: "0.15s" }}
+                    ></div>
+                    <div
+                      className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                      style={{ animationDelay: "0.3s" }}
+                    ></div>
                   </div>
                 </motion.div>
               )}
-
               <div ref={messagesEndRef} />
             </div>
 
             {/* Input */}
-            <div className="p-4 border-t border-gray-200">
-              <div className="flex gap-2">
+            <div className="border-t border-gray-200 bg-white/90 backdrop-blur-sm p-4">
+              <div className="flex items-center gap-3">
                 <input
-                  ref={inputRef}
                   type="text"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Ketik pesanmu di sini..."
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  placeholder="Ketik sesuatu..."
+                  className="flex-1 px-4 py-2.5 border border-gray-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 font-[Inter] shadow-inner"
                 />
-                <button
+                <motion.button
                   onClick={handleSend}
                   disabled={!input.trim() || isTyping}
-                  className="bg-indigo-500 text-white p-2 rounded-full hover:bg-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white p-3 rounded-full hover:shadow-lg disabled:opacity-50 transition-all"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  <Send size={16} />
-                </button>
+                  <Send size={18} />
+                </motion.button>
               </div>
             </div>
           </motion.div>

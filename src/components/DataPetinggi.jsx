@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 
 const TEAM = [
@@ -56,6 +56,10 @@ const cardVariants = {
 };
 
 export default function DataPetinggi() {
+  useEffect(() => {
+    document.title = "PETINGGI MEDIS - KISAH TANAH AIR";
+  }, []);
+
   const topLevel = TEAM.filter((t) => t.level === "atas");
   const bottomLevel = TEAM.filter((t) => t.level === "bawah");
 

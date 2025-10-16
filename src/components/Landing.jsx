@@ -24,6 +24,10 @@ function FeatureCard({ icon, title, desc, delay = 0 }) {
 }
 
 export default function Beranda() {
+  useEffect(() => {
+    document.title = "RS KISAH TANAH AIR";
+  }, []);
+
   // 📝 Efek teks mengetik dengan looping
   const texts = [
     "Pelayanan dengan Hati ❤️",

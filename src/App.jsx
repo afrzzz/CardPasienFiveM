@@ -4,6 +4,9 @@ import PatientCard from "./components/PatientCard";
 import useExternalScripts from "./hooks/useExternalScripts";
 
 export default function App() {
+  useEffect(() => {
+    document.title = "ASKES MEDIS - KISAH TANAH AIR";
+  }, []);
   const [nama, setNama] = useState("");
   const [ttl, setTtl] = useState("");
   const [kelas, setKelas] = useState("");
