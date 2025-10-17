@@ -1,16 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 
 export default function Navbar() {
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const navItems = [
     { path: "/", label: "Beranda" },
-    { path: "/askes", label: "Pembuatan Askes" },
+    {
+      label: "Buat Dokumen",
+      dropdown: [
+        { path: "/askes", label: "Askes" },
+        { path: "/surat-resign", label: "Surat Resign" },
+        { path: "/piagam", label: "Piagam (Coming Soon)" },
+        { path: "/sertifikat", label: "Sertifikat (Coming Soon)" },
+        { path: "/sk-kerja", label: "SK Kerja (Coming Soon)" },
+      ],
+    },
     { path: "/strukturpetinggi", label: "Struktur Petinggi" },
   ];
 
@@ -48,7 +58,6 @@ export default function Navbar() {
             whileHover={{ scale: 1.05 }}
             className="flex items-center gap-3 cursor-pointer select-none"
           >
-            {/* Logo Box */}
             <motion.div
               animate={{
                 backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
@@ -71,8 +80,6 @@ export default function Navbar() {
               />
               <span className="relative z-10">KiTA</span>
             </motion.div>
-
-            {/* Text beside logo */}
             <div className="overflow-hidden">
               <motion.h1
                 initial={{ y: 10, opacity: 0 }}
@@ -100,9 +107,67 @@ export default function Navbar() {
           </motion.div>
 
           {/* DESKTOP LINKS */}
-          <div className="hidden md:flex gap-6 items-center">
+          <div className="hidden md:flex gap-6 items-center relative">
             {navItems.map((item, i) => {
               const isActive = location.pathname === item.path;
+
+              if (item.dropdown) {
+                return (
+                  <motion.div
+                    key={item.label}
+                    custom={i}
+                    initial="hidden"
+                    animate="visible"
+                    variants={linkVariants}
+                    className="relative"
+                    onMouseEnter={() => setDropdownOpen(true)}
+                    onMouseLeave={() => setDropdownOpen(false)}
+                  >
+                    <button
+                      className={`flex items-center gap-1 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300 ${
+                        dropdownOpen
+                          ? "text-sky-700 bg-sky-100/70 shadow-sm"
+                          : "text-slate-700 hover:text-sky-700 hover:bg-sky-50"
+                      }`}
+                    >
+                      {item.label}
+                      <ChevronDown
+                        size={16}
+                        className={`transition-transform ${
+                          dropdownOpen ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
+
+                    <AnimatePresence>
+                      {dropdownOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                          transition={{ duration: 0.25 }}
+                          className="absolute top-[110%] left-0 w-48 bg-white/90 backdrop-blur-md shadow-md border border-sky-100 rounded-lg overflow-hidden"
+                        >
+                          {item.dropdown.map((sub) => (
+                            <Link
+                              key={sub.path}
+                              to={sub.path}
+                              className={`block px-4 py-2 text-sm font-medium transition-all ${
+                                location.pathname === sub.path
+                                  ? "bg-sky-100 text-sky-700"
+                                  : "text-slate-700 hover:bg-sky-50 hover:text-sky-800"
+                              }`}
+                            >
+                              {sub.label}
+                            </Link>
+                          ))}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+                );
+              }
+
               return (
                 <motion.div
                   key={item.path}
@@ -144,7 +209,6 @@ export default function Navbar() {
         </div>
       </motion.nav>
 
-      {/* Spacer supaya konten gak ketutup navbar */}
       <div className="h-[72px] md:h-[80px]" />
 
       {/* MOBILE MENU */}
@@ -161,6 +225,52 @@ export default function Navbar() {
           >
             <div className="flex flex-col items-start px-6 py-5 gap-2">
               {navItems.map((item) => {
+                if (item.dropdown) {
+                  return (
+                    <div key={item.label} className="w-full">
+                      <button
+                        onClick={() =>
+                          setDropdownOpen(
+                            dropdownOpen === item.label ? null : item.label
+                          )
+                        }
+                        className="w-full flex justify-between items-center px-4 py-3 rounded-md font-medium text-sm text-slate-700 hover:bg-sky-50 hover:text-sky-800"
+                      >
+                        {item.label}
+                        <ChevronDown
+                          size={16}
+                          className={`transition-transform ${
+                            dropdownOpen === item.label ? "rotate-180" : ""
+                          }`}
+                        />
+                      </button>
+
+                      <AnimatePresence>
+                        {dropdownOpen === item.label && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.25 }}
+                            className="flex flex-col pl-6"
+                          >
+                            {item.dropdown.map((sub) => (
+                              <Link
+                                key={sub.path}
+                                to={sub.path}
+                                onClick={() => setMenuOpen(false)}
+                                className="py-2 text-sm text-slate-600 hover:text-sky-700 transition"
+                              >
+                                {sub.label}
+                              </Link>
+                            ))}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  );
+                }
+
                 const isActive = location.pathname === item.path;
                 return (
                   <Link

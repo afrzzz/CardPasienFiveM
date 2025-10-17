@@ -4,8 +4,9 @@ import App from "./App";
 import Landing from "./components/Landing";
 import Navbar from "./components/Navbar";
 import "./index.css";
-import StrukturPetinggi from "./components/DataPetinggi";
+import StrukturPetinggi from "./pages/DataPetinggi";
 import ProtectedAskes from "./components/protected/ProtectedAskes";
+import ResignLetter from "./pages/ResignLetter";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>
@@ -22,6 +23,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         }
       />
       <Route path="/strukturpetinggi" element={<StrukturPetinggi />} />
+      <Route path="/surat-resign" element={<ResignLetter />} />
     </Routes>
   </BrowserRouter>
 );

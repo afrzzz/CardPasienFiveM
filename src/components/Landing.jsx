@@ -1,5 +1,6 @@
-import { motion, useScroll, useTransform, useInView } from "framer-motion";
+import { Link } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
+import { motion, useScroll, useTransform, useInView } from "framer-motion";
 import { FaHeartbeat, FaHospitalUser, FaStethoscope } from "react-icons/fa";
 import ChatAssistant from "./ChatAssistant";
 
@@ -24,25 +25,55 @@ function FeatureCard({ icon, title, desc, delay = 0 }) {
 }
 
 export default function Beranda() {
-  useEffect(() => {
-    document.title = "RS KISAH TANAH AIR";
-  }, []);
-
-  // 📝 Efek teks mengetik dengan looping
-  const texts = [
-    "Pelayanan dengan Hati ❤️",
-    "Profesionalisme untuk Semua 👨‍⚕️",
-    "Kesehatan Anda, Prioritas Kami 🏥",
-  ];
+  const [isOpen, setIsOpen] = useState(false);
+  const [today, setToday] = useState("");
   const [text, setText] = useState("");
   const [index, setIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // ✨ Ketik otomatis
+  const texts = [
+    "Pelayanan dengan Hati ❤️",
+    "Profesionalisme untuk Semua 👨‍⚕️",
+    "Kesehatan Anda, Prioritas Kami 🏥",
+  ];
+
+  // Ganti bagian useEffect tanggal lama menjadi ini:
+  useEffect(() => {
+    document.title = "RS KISAH TANAH AIR";
+
+    const updateDateTime = () => {
+      const now = new Date();
+      const dateStr = now.toLocaleDateString("id-ID", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+      });
+      const timeStr = now.toLocaleTimeString("id-ID", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      });
+      setToday(`${dateStr} — ${timeStr}`);
+
+      const date = now.getDate();
+      setIsOpen(date >= 20 && date <= 26);
+    };
+
+    // Jalankan pertama kali
+    updateDateTime();
+
+    // Update setiap 1 detik
+    const interval = setInterval(updateDateTime, 1000);
+
+    // Hapus interval saat komponen unmount
+    return () => clearInterval(interval);
+  }, []);
+
+  // ⌨️ Efek mengetik dengan loop
   useEffect(() => {
     const currentText = texts[index];
-    const typingSpeed = isDeleting ? 40 : 100;
+    const speed = isDeleting ? 40 : 100;
 
     const timeout = setTimeout(() => {
       if (!isDeleting && charIndex < currentText.length) {
@@ -57,7 +88,7 @@ export default function Beranda() {
         setIsDeleting(false);
         setIndex((prev) => (prev + 1) % texts.length);
       }
-    }, typingSpeed);
+    }, speed);
 
     return () => clearTimeout(timeout);
   }, [charIndex, isDeleting, index, texts]);
@@ -94,7 +125,7 @@ export default function Beranda() {
         Rumah Sakit Kisah Tanah Air
       </motion.h1>
 
-      {/* ⌨️ Efek mengetik */}
+      {/* ✨ Efek mengetik */}
       <motion.p
         className="text-xl md:text-2xl text-gray-800 font-medium h-8 mb-10 z-10"
         initial={{ opacity: 0 }}
@@ -131,19 +162,86 @@ export default function Beranda() {
         />
       </section>
 
-      {/* 🔘 Tombol Aksi */}
+      {/* 🔘 Tombol Aksi Modern & Animatif */}
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.8 }}
-        className="mt-12 z-10"
+        className="mt-16 z-10 text-center space-y-4"
       >
-        <button
-          aria-label="Buat janji konsultasi sekarang"
-          className="px-8 py-3 bg-gradient-to-r from-indigo-600 to-sky-500 text-white font-semibold rounded-full shadow-md hover:shadow-lg hover:scale-105 focus:ring-2 focus:ring-indigo-400 focus:outline-none transition-all duration-300"
+        {isOpen ? (
+          <motion.a
+            href="https://forms.gle/73qh2ZU8vh9MjRXB6"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Buka halaman career eksternal"
+            whileHover={{
+              scale: 1.08,
+              boxShadow: "0 0 25px rgba(56,189,248,0.6)",
+            }}
+            whileTap={{ scale: 0.96 }}
+            className="relative inline-block overflow-hidden px-10 py-4 rounded-full text-white font-semibold text-sm tracking-wide uppercase transition-all duration-300 bg-gradient-to-r from-sky-500 via-indigo-500 to-sky-600 shadow-lg"
+          >
+            <motion.span
+              className="absolute inset-0 bg-gradient-to-r from-white/30 to-transparent opacity-40"
+              animate={{ x: ["-150%", "150%"] }}
+              transition={{
+                duration: 3,
+                ease: "easeInOut",
+                repeat: Infinity,
+              }}
+            />
+            <motion.span
+              animate={{
+                textShadow: [
+                  "0 0 5px rgba(255,255,255,0.5)",
+                  "0 0 20px rgba(56,189,248,0.8)",
+                  "0 0 5px rgba(255,255,255,0.5)",
+                ],
+              }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="relative z-10"
+            >
+              OPEN RECRUITMENT — APPLY NOW
+            </motion.span>
+          </motion.a>
+        ) : (
+          <motion.button
+            disabled
+            initial={{ opacity: 0.8 }}
+            animate={{
+              opacity: [0.8, 0.6, 0.8],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="px-10 py-4 bg-gradient-to-r from-gray-400 to-gray-500 text-white font-semibold rounded-full shadow-inner cursor-not-allowed text-sm tracking-wide uppercase inline-block"
+          >
+            RECRUITMENT CLOSED
+          </motion.button>
+        )}
+
+        {/* 🕓 Status dan Waktu */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1 }}
+          className="text-sm text-slate-700 italic"
         >
-          CAREER COMING SOON
-        </button>
+          {isOpen
+            ? "✨ Pendaftaran dibuka hingga tanggal 26 setiap bulan."
+            : "🔒 Pendaftaran dibuka pada tanggal 20 Oktober 2025."}
+        </motion.p>
+
+        <motion.p
+          animate={{ opacity: [1, 0.6, 1] }}
+          transition={{ duration: 2, repeat: Infinity }}
+          className="text-xs text-slate-500"
+        >
+          Hari ini: {today}
+        </motion.p>
       </motion.div>
 
       {/* 🦶 Footer */}
@@ -155,7 +253,7 @@ export default function Beranda() {
         — Created by Afrzzz.
       </footer>
 
-      {/* Chat Assistant */}
+      {/* 💬 Chat Assistant */}
       <ChatAssistant />
     </main>
   );
