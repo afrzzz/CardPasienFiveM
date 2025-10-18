@@ -16,9 +16,9 @@ export default function Navbar() {
       dropdown: [
         { path: "/askes", label: "Askes" },
         { path: "/surat-resign", label: "Surat Resign" },
-        { path: "/piagam", label: "Piagam (Coming Soon)" },
-        { path: "/sertifikat", label: "Sertifikat (Coming Soon)" },
-        { path: "/sk-kerja", label: "SK Kerja (Coming Soon)" },
+        { path: "/piagam", label: "Piagam Penghargaan" },
+        { path: "/sertifikat", label: "Sertifikat" },
+        { path: "/sk-kerja", label: "SK Kerja" },
       ],
     },
     { path: "/strukturpetinggi", label: "Struktur Petinggi" },
