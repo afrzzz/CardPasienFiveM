@@ -41,7 +41,7 @@ const TEAM = [
     id: 6,
     name: "dr. Zaviro Zavisco",
     role: "R&D RS Kisah Tanah Air",
-    src: "/images/executives/noimage.png",
+    src: "/images/executives/zav.png",
     level: "bawah",
   },
   {
