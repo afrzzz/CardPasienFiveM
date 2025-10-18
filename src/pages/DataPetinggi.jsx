@@ -32,7 +32,7 @@ const TEAM = [
   },
   {
     id: 5,
-    name: "dr. Bianca E. Chaprinno",
+    name: "Apt. Bianca E. Chaprinno",
     role: "Keuangan RS Kisah Tanah Air",
     src: "/images/executives/bi.png",
     level: "bawah",
@@ -81,7 +81,7 @@ const TEAM = [
   },
   {
     id: 12,
-    name: "dr. Harto S Mcdonald",
+    name: "Apt. Harto S Mcdonald",
     role: "Staff HRD RS Kisah Tanah Air",
     src: "/images/executives/har.png",
     level: "bawah",
