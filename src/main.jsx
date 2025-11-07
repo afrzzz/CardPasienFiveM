@@ -9,6 +9,8 @@ import StrukturPetinggi from "./pages/DataPetinggi";
 import ProtectedAskes from "./components/protected/ProtectedAskes";
 import ResignLetter from "./pages/ResignLetter";
 import Piagam from "./pages/Piagam.jsx";
+import Sertifikat from "./pages/Sertifikat";
+import KpPage from "./pages/KpPage";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>
@@ -25,6 +27,14 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       />
       <Route path="/strukturpetinggi" element={<StrukturPetinggi />} />
       <Route
+        path="/kp"
+        element={
+          <ProtectedAskes>
+            <KpPage />
+          </ProtectedAskes>
+        }
+      />
+      <Route
         path="/surat-resign"
         element={
           <ProtectedAskes>
@@ -40,7 +50,14 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           </ProtectedAskes>
         }
       />
-      <Route path="/sertifikat" element={<ComingSoon />} />
+      <Route
+        path="/sertifikat"
+        element={
+          <ProtectedAskes>
+            <Sertifikat />
+          </ProtectedAskes>
+        }
+      />
       <Route path="/sk-kerja" element={<ComingSoon />} />
     </Routes>
   </BrowserRouter>

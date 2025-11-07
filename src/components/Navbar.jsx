@@ -15,6 +15,7 @@ export default function Navbar() {
       label: "Buat Dokumen",
       dropdown: [
         { path: "/askes", label: "Askes" },
+        { path: "/kp", label: "Kartu Pasien Warga" },
         { path: "/surat-resign", label: "Surat Resign" },
         { path: "/piagam", label: "Piagam Penghargaan" },
         { path: "/sertifikat", label: "Sertifikat" },
