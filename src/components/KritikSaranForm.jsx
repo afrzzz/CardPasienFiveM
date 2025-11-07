@@ -130,17 +130,6 @@ export default function KritikSaranForm() {
           >
             Kritik dan saran Anda telah dikirim.
           </motion.p>
-          <motion.button
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.6 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setIsSubmitted(false)}
-            className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200"
-          >
-            Kirim lagi
-          </motion.button>
         </motion.div>
       </motion.div>
     );
