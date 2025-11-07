@@ -4,10 +4,31 @@ import { X, Send, Bot } from "lucide-react";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import ReactMarkdown from "react-markdown";
 
-// 🔐 Ambil semua API key dari .env
-const API_KEYS = import.meta.env.VITE_GOOGLE_AI_API_KEY.split(",").map((k) =>
-  k.trim()
-);
+// 🔐 Ambil semua API key dari .env dengan proteksi
+let API_KEYS = [];
+
+// Coba ambil isi environment variable
+const rawEnvKeys = import.meta.env.VITE_GOOGLE_AI_API_KEY;
+
+if (!rawEnvKeys) {
+  console.warn(
+    "⚠️  Tidak menemukan variabel VITE_GOOGLE_AI_API_KEY di .env — pastikan file .env ada di root project dan sudah di-restart server (npm run dev)."
+  );
+} else {
+  API_KEYS = rawEnvKeys
+    .split(",")
+    .map((k) => k.trim())
+    .filter((k) => k.length > 0);
+
+  if (API_KEYS.length === 0) {
+    console.warn("⚠️  Variabel .env ditemukan tapi kosong!");
+  }
+}
+
+if (API_KEYS.length === 0) {
+  // Default biar gak crash, meskipun gak bisa konek ke AI
+  API_KEYS = ["INVALID_KEY_PLACEHOLDER"];
+}
 
 export default function ChatAssistant() {
   const [isOpen, setIsOpen] = useState(false);

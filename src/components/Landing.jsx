@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, useScroll, useTransform, useInView } from "framer-motion";
 import { FaHeartbeat, FaHospitalUser, FaStethoscope } from "react-icons/fa";
 import ChatAssistant from "./ChatAssistant";
+import KritikSaranForm from "./KritikSaranForm";
 
 function FeatureCard({ icon, title, desc, delay = 0 }) {
   const ref = useRef(null);
@@ -31,6 +32,7 @@ export default function Beranda() {
   const [index, setIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showForm, setShowForm] = useState(false);
 
   const texts = [
     "Pelayanan dengan Hati ❤️",
@@ -162,19 +164,16 @@ export default function Beranda() {
         />
       </section>
 
-      {/* 🔘 Tombol Aksi Modern & Animatif */}
+      {/* 🔘 Tombol Kritik dan Saran */}
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.8 }}
         className="mt-16 z-10 text-center space-y-4"
       >
-        {isOpen ? (
-          <motion.a
-            href="https://forms.gle/73qh2ZU8vh9MjRXB6"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Buka halaman career eksternal"
+        {!showForm ? (
+          <motion.button
+            onClick={() => setShowForm(true)}
             whileHover={{
               scale: 1.08,
               boxShadow: "0 0 25px rgba(56,189,248,0.6)",
@@ -202,38 +201,26 @@ export default function Beranda() {
               transition={{ duration: 2, repeat: Infinity }}
               className="relative z-10"
             >
-              OPEN RECRUITMENT — APPLY NOW
+              KRITIK DAN SARAN
             </motion.span>
-          </motion.a>
-        ) : (
-          <motion.button
-            disabled
-            initial={{ opacity: 0.8 }}
-            animate={{
-              opacity: [0.8, 0.6, 0.8],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-            className="px-10 py-4 bg-gradient-to-r from-gray-400 to-gray-500 text-white font-semibold rounded-full shadow-inner cursor-not-allowed text-sm tracking-wide uppercase inline-block"
-          >
-            RECRUITMENT CLOSED
           </motion.button>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="space-y-6"
+          >
+            <KritikSaranForm />
+            <motion.button
+              onClick={() => setShowForm(false)}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="block mx-auto px-6 py-2 bg-gray-500 text-white font-medium rounded-lg hover:bg-gray-600 transition-all duration-200 shadow-md"
+            >
+              Tutup Form
+            </motion.button>
+          </motion.div>
         )}
-
-        {/* 🕓 Status dan Waktu */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
-          className="text-sm text-slate-700 italic"
-        >
-          {isOpen
-            ? "✨ Pendaftaran dibuka hingga tanggal 26 setiap bulan."
-            : "🔒 Pendaftaran dibuka pada tanggal 20 Oktober 2025."}
-        </motion.p>
 
         <motion.p
           animate={{ opacity: [1, 0.6, 1] }}
