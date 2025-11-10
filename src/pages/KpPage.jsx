@@ -64,7 +64,9 @@ export default function KpPage() {
         "payload_json",
         JSON.stringify({
           username: "Kartu KP Bot",
-          content: `\n**Kartu Pasien** ${nama}\n**Pembuat** ${kelas}\n**Masa Berlaku Sampai :** ${masaBerlaku}\n**Link Pembuatan :** https://rs-kisahtanahair.vercel.app/\n**Sandi : MEDICKITA2**`,
+          content: `\n**Kartu Pasien** ${nama}\n**Pembuat** ${kelas}\n**Masa Berlaku Sampai :** ${masaBerlaku}\n**Link Pembuatan :** https://rs-kisahtanahair.vercel.app/\n**Password:** ${
+            import.meta.env.VITE_PROTECTED_PASSWORD_ASKES
+          }`,
         })
       );
 

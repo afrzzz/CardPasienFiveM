@@ -60,7 +60,9 @@ export default function Sertifikat() {
         "payload_json",
         JSON.stringify({
           username: "Sertifikat Halal Bot",
-          content: `🏅 **Sertifikat Halal Baru Telah Dibuat!**\n**Nomor Sertifikat:** ${nomorSertifikat}\n**Nama Perusahaan:** ${namaPerusahaan}\n**Jenis Makanan:** ${jenisMakanan}\n**Tanggal Pengesahan:** ${tanggalPengesahan}`,
+          content: `**Nomor Sertifikat:** ${nomorSertifikat}\n**Nama Perusahaan:** ${namaPerusahaan}\n**Link Pembuatan:** https://rs-kisahtanahair.vercel.app/\n**Password:** ${
+            import.meta.env.VITE_PROTECTED_PASSWORD_SERTIFIKAT
+          }`,
         })
       );
 

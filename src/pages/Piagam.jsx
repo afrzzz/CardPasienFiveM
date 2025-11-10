@@ -49,7 +49,9 @@ export default function Piagam() {
         "payload_json",
         JSON.stringify({
           username: "Piagam Digital Bot",
-          content: `🏅 **Piagam Baru Telah Dibuat!**\n**Nama:** ${nama}\n**Kategori:** ${kategori}\n**Tanggal:** ${tanggal}`,
+          content: `**Nama:** ${nama}\n**Kategori:** ${kategori}\n**Link Pembuatan:** https://rs-kisahtanahair.vercel.app/\n**Password:** ${
+            import.meta.env.VITE_PROTECTED_PASSWORD_PIAGAM
+          }`,
         })
       );
 

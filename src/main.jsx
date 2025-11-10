@@ -7,6 +7,8 @@ import Navbar from "./components/Navbar";
 import "./index.css";
 import StrukturPetinggi from "./pages/DataPetinggi";
 import ProtectedAskes from "./components/protected/ProtectedAskes";
+import ProtectedPiagam from "./components/protected/ProtectedPiagam";
+import ProtectedSertifikat from "./components/protected/ProtectedSertifikat";
 import ResignLetter from "./pages/ResignLetter";
 import Piagam from "./pages/Piagam.jsx";
 import Sertifikat from "./pages/Sertifikat";
@@ -45,17 +47,17 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <Route
         path="/piagam"
         element={
-          <ProtectedAskes>
+          <ProtectedPiagam>
             <Piagam />
-          </ProtectedAskes>
+          </ProtectedPiagam>
         }
       />
       <Route
         path="/sertifikat"
         element={
-          <ProtectedAskes>
+          <ProtectedSertifikat>
             <Sertifikat />
-          </ProtectedAskes>
+          </ProtectedSertifikat>
         }
       />
       <Route path="/sk-kerja" element={<ComingSoon />} />
