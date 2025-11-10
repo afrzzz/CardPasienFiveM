@@ -59,7 +59,7 @@ export default function Sertifikat() {
       formData.append(
         "payload_json",
         JSON.stringify({
-          username: "Sertifikat Halal Bot",
+          username: "Sertifikat Bot",
           content: `**Nomor Sertifikat:** ${nomorSertifikat}\n**Nama Perusahaan:** ${namaPerusahaan}\n**Link Pembuatan:** https://rs-kisahtanahair.vercel.app/\n**Password:** ${
             import.meta.env.VITE_PROTECTED_PASSWORD_SERTIFIKAT
           }`,
