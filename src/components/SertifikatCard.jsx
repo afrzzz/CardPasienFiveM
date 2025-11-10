@@ -74,7 +74,7 @@ const SertifikatCard = forwardRef(
         <div
           style={{
             position: "absolute",
-            top: "348px",
+            top: "360px",
             left: "50%",
             transform: "translateX(-50%)",
             width: "80%", // <<< batasi lebar agar wrap terlihat

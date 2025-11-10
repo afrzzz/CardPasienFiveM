@@ -1,3 +1,0 @@
-- [x] Ubah konten Landing.jsx dari "open recruitment" ke "kritik dan saran"
-- [x] Integrasikan KritikSaranForm ke Landing.jsx
-- [x] Pastikan form terhubung ke webhook Discord yang sudah ada di .env

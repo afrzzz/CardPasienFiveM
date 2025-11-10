@@ -14,12 +14,12 @@ export default function Navbar() {
     {
       label: "Buat Dokumen",
       dropdown: [
-        { path: "/askes", label: "Askes" },
+        { path: "/askes", label: "Askes Instansi" },
         { path: "/kp", label: "Kartu Pasien Warga" },
         { path: "/surat-resign", label: "Surat Resign" },
         { path: "/piagam", label: "Piagam Penghargaan" },
-        { path: "/sertifikat", label: "Sertifikat" },
-        { path: "/sk-kerja", label: "SK Kerja" },
+        { path: "/sertifikat", label: "Sertifikat Pangan" },
+        { path: "/sk-kerja", label: "SK Kerja (Coming Soon)" },
       ],
     },
     { path: "/strukturpetinggi", label: "Struktur Petinggi" },

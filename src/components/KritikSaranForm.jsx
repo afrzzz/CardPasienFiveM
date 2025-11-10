@@ -33,6 +33,7 @@ export default function KritikSaranForm() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
+            content: "📢 **PEMBERITAHUAN FOR** <@&1308825800572801044>",
             embeds: [
               {
                 title: "Kritik dan Saran Baru",
@@ -56,11 +57,6 @@ export default function KritikSaranForm() {
                   {
                     name: "🔗 Link Keluhan",
                     value: "https://rs-kisahtanahair.vercel.app/",
-                    inline: false,
-                  },
-                  {
-                    name: "📢 Pemberitahuan",
-                    value: "<@&1308825800572801044>",
                     inline: false,
                   },
                 ],
