@@ -213,7 +213,7 @@ User: "${input}"
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 40, scale: 0.9 }}
             transition={{ duration: 0.4, type: "spring" }}
-            className="fixed bottom-28 right-6 z-50 w-[400px] md:w-[420px] h-[560px] bg-white/70 backdrop-blur-md rounded-3xl shadow-[0_8px_30px_rgba(0,0,0,0.15)] flex flex-col border border-white/30 font-[Inter]"
+            className="fixed bottom-28 right-6 z-50 w-[90vw] max-w-[400px] md:w-[420px] h-[80vh] max-h-[560px] md:h-[560px] bg-white/70 backdrop-blur-md rounded-3xl shadow-[0_8px_30px_rgba(0,0,0,0.15)] flex flex-col border border-white/30 font-[Inter] sm:bottom-28 sm:right-6"
           >
             {/* Header */}
             <div className="bg-gradient-to-r from-violet-500 via-indigo-500 to-sky-500 text-white px-5 py-4 flex items-center justify-between rounded-t-3xl">
