@@ -13,6 +13,7 @@ import ResignLetter from "./pages/ResignLetter";
 import Piagam from "./pages/Piagam.jsx";
 import Sertifikat from "./pages/Sertifikat";
 import KpPage from "./pages/KpPage";
+import AIChatPage from "./components/AIChatPage";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>
@@ -28,6 +29,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         }
       />
       <Route path="/strukturpetinggi" element={<StrukturPetinggi />} />
+      <Route path="/ai-chat" element={<AIChatPage />} />
       <Route
         path="/kp"
         element={
