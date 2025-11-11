@@ -73,7 +73,7 @@ export default function KritikSaranForm() {
         setCategory("");
         setMessage("");
       } else {
-        setError("Gagal mengirim kritik dan saran. Coba lagi.");
+        setError("Sedang ada perbaikan server. Silakan coba lagi nanti.");
       }
     } catch (err) {
       setError("Terjadi kesalahan. Periksa koneksi internet Anda.");
